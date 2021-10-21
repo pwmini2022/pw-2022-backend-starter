@@ -43,4 +43,14 @@ RDS_USERNAME root //database user
 SERVER_PORT 5000 //it must be 5000 and it is defined in the application.properties
 SPRING_PROFILES_ACTIVE prod-mysql
 ```
-6. IMPORTANT: Add inbound rule to the db ecurity group to allow access all inbound ips. Mysql/Aurora anywhere 
+6. IMPORTANT: Add inbound rule to the db ecurity group to allow access all inbound ips. Mysql/Aurora anywhere.
+
+### Additional help:
+- create AWS account
+- [create IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html)
+- copy and paste the api key and secret api key
+- [install aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+- [create VPC](https://docs.aws.amazon.com/vpc/latest/userguide/default-vpc.html#create-default-vpc)
+- [Install EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install-windows.html)
+- [configure the EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html)
+- [save configuration](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-configuration-savedconfig.html)
