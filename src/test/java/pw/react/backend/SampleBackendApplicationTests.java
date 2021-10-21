@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 import pw.react.backend.service.HttpClient;
-import pw.react.backend.web.Quote;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
