@@ -1,4 +1,4 @@
-package pw.react.backend.appException;
+package pw.react.backend.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

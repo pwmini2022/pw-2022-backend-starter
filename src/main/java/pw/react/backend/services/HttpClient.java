@@ -1,4 +1,4 @@
-package pw.react.backend.service;
+package pw.react.backend.services;
 
 public interface HttpClient {
     Object consume(String url);

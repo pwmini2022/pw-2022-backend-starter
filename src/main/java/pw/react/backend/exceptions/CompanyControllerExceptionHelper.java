@@ -1,4 +1,4 @@
-package pw.react.backend.appException;
+package pw.react.backend.exceptions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

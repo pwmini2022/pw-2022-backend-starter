@@ -1,4 +1,4 @@
-package pw.react.backend.service;
+package pw.react.backend.services;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;

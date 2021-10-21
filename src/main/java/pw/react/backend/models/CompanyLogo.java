@@ -1,4 +1,4 @@
-package pw.react.backend.model;
+package pw.react.backend.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

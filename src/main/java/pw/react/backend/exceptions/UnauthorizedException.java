@@ -1,4 +1,4 @@
-package pw.react.backend.appException;
+package pw.react.backend.exceptions;
 
 public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException(String message) {

@@ -9,11 +9,11 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import pw.react.backend.appException.UnauthorizedException;
 import pw.react.backend.dao.CompanyRepository;
-import pw.react.backend.model.Company;
-import pw.react.backend.model.CompanyLogo;
-import pw.react.backend.service.*;
+import pw.react.backend.exceptions.UnauthorizedException;
+import pw.react.backend.models.Company;
+import pw.react.backend.models.CompanyLogo;
+import pw.react.backend.services.*;
 import pw.react.backend.web.UploadFileResponse;
 
 import java.util.Collection;

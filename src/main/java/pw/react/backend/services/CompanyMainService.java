@@ -1,11 +1,11 @@
-package pw.react.backend.service;
+package pw.react.backend.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dao.CompanyRepository;
-import pw.react.backend.model.Company;
+import pw.react.backend.models.Company;
 
 @Service
 class CompanyMainService implements CompanyService {

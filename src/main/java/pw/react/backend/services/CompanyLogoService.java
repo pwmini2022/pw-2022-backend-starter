@@ -1,4 +1,4 @@
-package pw.react.backend.service;
+package pw.react.backend.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import pw.react.backend.appException.InvalidFileException;
-import pw.react.backend.appException.ResourceNotFoundException;
 import pw.react.backend.dao.CompanyLogoRepository;
-import pw.react.backend.model.CompanyLogo;
+import pw.react.backend.exceptions.InvalidFileException;
+import pw.react.backend.exceptions.ResourceNotFoundException;
+import pw.react.backend.models.CompanyLogo;
 
 import java.io.IOException;
 

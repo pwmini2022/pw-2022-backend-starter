@@ -1,4 +1,4 @@
-package pw.react.backend.service;
+package pw.react.backend.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
