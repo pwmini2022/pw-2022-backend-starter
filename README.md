@@ -28,4 +28,19 @@ The following guides illustrate how to use some features concretely:
 * [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
 * [Building a RESTful Web Service with Spring Boot Actuator](https://spring.io/guides/gs/actuator-service/)
 
- 
+### AWS setup
+1. Go to Elastic Bean Stalk
+2. Create new environment
+3. Create new application
+4. Choose Java 11 and MySQL database.
+5. System parameters to set:
+```
+RDS_DB_NAME ebdb //this is default db name created automatically with the application
+RDS_HOSTNAME something similar to this: aa16my1gs1126vw.czyphws3wq6b.eu-central-1.rds.amazonaws.com
+RDS_PASSWORD MySQL password set during the creation
+RDS_PORT 3306 //MySQL server port
+RDS_USERNAME root //database user
+SERVER_PORT 5000 //it must be 5000 and it is defined in the application.properties
+SPRING_PROFILES_ACTIVE prod-mysql
+```
+6. IMPORTANT: Add inbound rule to the db ecurity group to allow access all inbound ips. Mysql/Aurora anywhere 
