@@ -41,10 +41,28 @@ RDS_PASSWORD MySQL password set during the creation
 RDS_PORT 3306 //MySQL server port
 RDS_USERNAME root //database user
 SERVER_PORT 5000 //it must be 5000 and it is defined in the application.properties
-SPRING_PROFILES_ACTIVE prod-mysql
+SPRING_PROFILES_ACTIVE prod-aws-mysql
 ```
 6. IMPORTANT: Add inbound rule to the db ecurity group to allow access all inbound ips. Mysql/Aurora anywhere.
 
+### Azure
+Assumption: The subscription has been configured properly and it is active. 
+1. Go to [Quickstart Center](https://portal.azure.com/?quickstart=true#blade/Microsoft_Azure_Resources/QuickstartCenterBlade)
+2. Create a web app under new resource group.
+3. Create new application
+4. Choose Java 11 and create.
+5. Under the same resource group create MySQL database engine 8.
+6. Environment parameters set under Configuration of Web App:
+```
+MYSQL_DB_NAME this is default db name created automatically with the application
+MYSQL_HOSTNAME something similar to this: aa16my1gs1126vw.czyphws3wq6b.eu-central-1.rds.amazonaws.com
+MYSQL_PASSWORD MySQL password set during the creation
+MYSQL_PORT 3306 //MySQL server port
+MYSQL_USERNAME root //database user
+SPRING_PROFILES_ACTIVE prod-azure-mysql
+```
+7. IMPORTANT: In order to have access to the MySQL database, one have to change `Allow access to Azure services
+   ` to `Yes` and add `Firewall rule` to access the database from specific IP (like home).
 ### Additional help:
 - create AWS account
 - [create IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html)
@@ -54,3 +72,4 @@ SPRING_PROFILES_ACTIVE prod-mysql
 - [Install EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install-windows.html)
 - [configure the EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html)
 - [save configuration](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-configuration-savedconfig.html)
+- [Azure Idea plugin](https://docs.microsoft.com/en-us/azure/developer/java/toolkit-for-intellij/create-hello-world-web-app)
