@@ -43,15 +43,15 @@ RDS_USERNAME root //database user
 SERVER_PORT 5000 //it must be 5000 and it is defined in the application.properties
 SPRING_PROFILES_ACTIVE prod-aws-mysql
 ```
-6. IMPORTANT: Add inbound rule to the db ecurity group to allow access all inbound ips. Mysql/Aurora anywhere.
+6. IMPORTANT: Add inbound rule to the db security group to allow access all inbound ips. Mysql/Aurora anywhere.
 
 ### Azure
-Assumption: The subscription has been configured properly and it is active. 
+Assumption: The subscription has been configured properly, and it is active. 
 1. Go to [Quickstart Center](https://portal.azure.com/?quickstart=true#blade/Microsoft_Azure_Resources/QuickstartCenterBlade)
 2. Create a web app under new resource group.
 3. Create new application
 4. Choose Java 11 and create.
-5. Under the same resource group create MySQL database engine 8.
+5. Under the same resource group create MySQL database engine 8. Create db schema in Workbench
 6. Environment parameters set under Configuration of Web App:
 ```
 MYSQL_DB_NAME this is default db name created automatically with the application
