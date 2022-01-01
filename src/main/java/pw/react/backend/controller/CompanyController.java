@@ -1,7 +1,6 @@
 package pw.react.backend.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -23,9 +22,8 @@ import static java.util.stream.Collectors.joining;
 
 @RestController
 @RequestMapping(path = "/companies")
+@Slf4j
 public class CompanyController {
-
-    private final Logger logger = LoggerFactory.getLogger(CompanyController.class);
 
     private final CompanyRepository repository;
     private final SecurityProvider securityService;
@@ -55,7 +53,7 @@ public class CompanyController {
     }
 
     private void logHeaders(@RequestHeader HttpHeaders headers) {
-        logger.info("Controller request headers {}",
+        log.info("Controller request headers {}",
                 headers.entrySet()
                         .stream()
                         .map(entry -> String.format("%s->[%s]", entry.getKey(), String.join(",", entry.getValue())))

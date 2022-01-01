@@ -1,11 +1,12 @@
 package pw.react.backend.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,22 +17,25 @@ import java.util.*;
 import static java.util.stream.Collectors.toSet;
 
 @Configuration
+@Slf4j
 public class MainConfig {
 
     @Value(value = "${cors.urls}")
     private String corsUrls;
     @Value(value = "${cors.mappings}")
     private String corsMappings;
+    @Autowired
+    private WebSecurityConfigurerAdapter webSecurityConfigurerAdapter;
 
     private static final Map<String, String> envPropertiesMap = System.getenv();
 
     @PostConstruct
     private void init() {
-        Logger logger = LoggerFactory.getLogger(MainConfig.class);
-        logger.debug("************** Environment variables **************");
+        log.debug("************** Environment variables **************");
         for (Map.Entry<String, String> entry : envPropertiesMap.entrySet()) {
-            logger.debug("[{}] : [{}]", entry.getKey(), entry.getValue());
+            log.debug("[{}] : [{}]", entry.getKey(), entry.getValue());
         }
+        log.debug("WebSecurityConfigurerAdapter implementation is [{}].", webSecurityConfigurerAdapter.getClass().getSimpleName());
     }
 
     @Bean
