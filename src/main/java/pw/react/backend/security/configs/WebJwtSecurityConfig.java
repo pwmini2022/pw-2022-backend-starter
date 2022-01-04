@@ -2,7 +2,9 @@ package pw.react.backend.security.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
+import pw.react.backend.dao.UserRepository;
 import pw.react.backend.security.filters.JwtAuthenticationEntryPoint;
 import pw.react.backend.security.filters.JwtRequestFilter;
 import pw.react.backend.security.services.JwtTokenService;
@@ -32,6 +35,13 @@ public class WebJwtSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value(value = "${jwt.expirationMs}")
     private long jwtExpirationMs;
 
+    private final UserRepository userRepository;
+
+    @Autowired
+    public WebJwtSecurityConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Bean
     public JwtTokenService jwtTokenService() {
         return new JwtTokenService(jwtSecret, jwtExpirationMs);
@@ -39,7 +49,7 @@ public class WebJwtSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtUserDetailsService jwtUserDetailsService() {
-        return new JwtUserDetailsService();
+        return new JwtUserDetailsService(userRepository);
     }
 
     @Bean
@@ -74,7 +84,8 @@ public class WebJwtSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors().and().csrf().disable()
+                //.cors().disable()
+                .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint()).and()
                 // make sure we use stateless session; session won't be used to store user's state.
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

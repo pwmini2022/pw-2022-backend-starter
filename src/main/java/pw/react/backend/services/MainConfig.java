@@ -1,15 +1,14 @@
 package pw.react.backend.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import pw.react.backend.dao.UserRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -24,8 +23,6 @@ public class MainConfig {
     private String corsUrls;
     @Value(value = "${cors.mappings}")
     private String corsMappings;
-    @Autowired
-    private WebSecurityConfigurerAdapter webSecurityConfigurerAdapter;
 
     private static final Map<String, String> envPropertiesMap = System.getenv();
 
@@ -35,7 +32,6 @@ public class MainConfig {
         for (Map.Entry<String, String> entry : envPropertiesMap.entrySet()) {
             log.debug("[{}] : [{}]", entry.getKey(), entry.getValue());
         }
-        log.debug("WebSecurityConfigurerAdapter implementation is [{}].", webSecurityConfigurerAdapter.getClass().getSimpleName());
     }
 
     @Bean
@@ -46,6 +42,11 @@ public class MainConfig {
     @Bean
     public HttpClient httpClient(RestTemplate restTemplate) {
         return new HttpService(restTemplate);
+    }
+
+    @Bean
+    public UserClient userClient(UserRepository userRepository) {
+        return new UserService(userRepository);
     }
 
     @Bean

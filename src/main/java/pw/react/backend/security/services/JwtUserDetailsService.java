@@ -1,16 +1,25 @@
 package pw.react.backend.security.services;
 
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import pw.react.backend.dao.UserRepository;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
 public class JwtUserDetailsService implements UserDetailsService {
 
+    private final UserRepository userRepository;
+
+    public JwtUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if ("pawg".equals(username)) {
-            return new User("pawg", "$2a$10$xk3Wruq5OykyFmEIwZr.w.N69ZdGLSspK3cyVS9lVTCkQ.z9i5RAK",
-                    new ArrayList<>());
+        Optional<pw.react.backend.models.User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return user.get();
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }

@@ -24,12 +24,12 @@ public class Company implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @Column(name = "name")
+    @Column
     private String name;
     @Column(name = "startDate")
     @JsonDeserialize(using = JsonDateDeserializer.class)
     @JsonSerialize(using = JsonDateSerializer.class)
     private LocalDateTime startDateTime;
-    @Column(name = "boardMembers")
+    @Column
     private int boardMembers;
 }
