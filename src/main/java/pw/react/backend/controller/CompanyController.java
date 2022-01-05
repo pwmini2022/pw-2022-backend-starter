@@ -26,9 +26,11 @@ import java.util.List;
 import static java.util.stream.Collectors.joining;
 
 @RestController
-@RequestMapping(path = "/companies")
+@RequestMapping(path = CompanyController.COMPANIES_PATH)
 @Slf4j
 public class CompanyController {
+
+    public static final String COMPANIES_PATH = "/companies";
 
     private final CompanyRepository repository;
     private final SecurityProvider securityService;
@@ -54,7 +56,7 @@ public class CompanyController {
             List<Company> result = repository.saveAll(companies);
             return ResponseEntity.ok(result.stream().map(c -> String.valueOf(c.getId())).collect(joining(",")));
         }
-        throw new UnauthorizedException("Unauthorized access to resources.");
+        throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
     private void logHeaders(@RequestHeader HttpHeaders headers) {
@@ -82,7 +84,7 @@ public class CompanyController {
         if (securityService.isAuthorized(headers)) {
             return ResponseEntity.ok(repository.findAll());
         }
-        throw new UnauthorizedException("Request is unauthorized");
+        throw new UnauthorizedException("Request is unauthorized", COMPANIES_PATH);
     }
 
     @PutMapping(path = "/{companyId}")
@@ -98,7 +100,7 @@ public class CompanyController {
             }
             return ResponseEntity.ok(result);
         }
-        throw new UnauthorizedException("Request is unauthorized");
+        throw new UnauthorizedException("Request is unauthorized", COMPANIES_PATH);
     }
 
     @DeleteMapping(path = "/{companyId}")
@@ -111,7 +113,7 @@ public class CompanyController {
             }
             return ResponseEntity.ok(String.format("Company with id %s deleted.", companyId));
         }
-        throw new UnauthorizedException("Unauthorized access to resources.");
+        throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
     @PostMapping("/{companyId}/logo")
@@ -130,7 +132,7 @@ public class CompanyController {
                     companyLogo.getFileName(), fileDownloadUri, file.getContentType(), file.getSize()
             ));
         }
-        throw new UnauthorizedException("Unauthorized access to resources.");
+        throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
     @GetMapping(value = "/{companyId}/logo", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -141,7 +143,7 @@ public class CompanyController {
             return companyLogo.getData();
         }
 
-        throw new UnauthorizedException("Unauthorized access to resources.");
+        throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
     @GetMapping(value = "/{companyId}/logo2")
@@ -155,7 +157,7 @@ public class CompanyController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + companyLogo.getFileName() + "\"")
                     .body(new ByteArrayResource(companyLogo.getData()));
         }
-        throw new UnauthorizedException("Unauthorized access to resources.");
+        throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
     @DeleteMapping(value = "/{companyId}/logo")
@@ -165,7 +167,7 @@ public class CompanyController {
             companyLogoService.deleteCompanyLogo(Long.parseLong(companyId));
             return ResponseEntity.ok().body(String.format("Logo for the company with id %s removed.", companyId));
         }
-        throw new UnauthorizedException("Unauthorized access to resources.");
+        throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
 }

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.util.MimeTypeUtils;
 import pw.react.backend.exceptions.ExceptionDetails;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,12 +24,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
                          AuthenticationException authException) throws IOException {
 
         log.error("Unauthorized error: {}", authException.getMessage());
-        //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errJson);
         ObjectMapper objectMapper = new ObjectMapper();
         ExceptionDetails exceptionDetails = new ExceptionDetails(HttpStatus.UNAUTHORIZED, authException.getMessage());
+        exceptionDetails.setPath(request.getRequestURI());
         String errJson = objectMapper.writeValueAsString(exceptionDetails);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
+        response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
         response.getOutputStream().write(errJson.getBytes(StandardCharsets.UTF_8));
     }
 }

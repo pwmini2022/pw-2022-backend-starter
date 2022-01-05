@@ -3,6 +3,7 @@ package pw.react.backend.exceptions;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import pw.react.backend.utils.JsonDateDeserializer;
 import pw.react.backend.utils.JsonDateSerializer;
@@ -16,6 +17,8 @@ public class ExceptionDetails {
     private final LocalDateTime timestamp;
     private final HttpStatus status;
     private final String errorMessage;
+    @Setter
+    private String path;
 
     public ExceptionDetails(HttpStatus status, String errorMessage) {
         timestamp = LocalDateTime.now();
