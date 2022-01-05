@@ -4,7 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -12,7 +15,9 @@ import pw.react.backend.dao.CompanyRepository;
 import pw.react.backend.exceptions.UnauthorizedException;
 import pw.react.backend.models.Company;
 import pw.react.backend.models.CompanyLogo;
-import pw.react.backend.services.*;
+import pw.react.backend.services.CompanyService;
+import pw.react.backend.services.LogoService;
+import pw.react.backend.services.SecurityProvider;
 import pw.react.backend.web.UploadFileResponse;
 
 import java.util.Collection;
@@ -49,7 +54,7 @@ public class CompanyController {
             List<Company> result = repository.saveAll(companies);
             return ResponseEntity.ok(result.stream().map(c -> String.valueOf(c.getId())).collect(joining(",")));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access to resources.");
+        throw new UnauthorizedException("Unauthorized access to resources.");
     }
 
     private void logHeaders(@RequestHeader HttpHeaders headers) {

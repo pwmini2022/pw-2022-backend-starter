@@ -3,6 +3,7 @@ package pw.react.backend.exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,7 +19,7 @@ public class ControllerExceptionHelper {
         return new ResponseEntity<>(new ExceptionDetails(HttpStatus.NOT_FOUND, ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = { UnauthorizedException.class })
+    @ExceptionHandler(value = { UnauthorizedException.class, AuthenticationException.class})
     public ResponseEntity<ExceptionDetails> handleUnauthorizedException(UnauthorizedException ex) {
         log.error("Invalid Input Exception: {}", ex.getMessage());
         return new ResponseEntity<>(new ExceptionDetails(HttpStatus.UNAUTHORIZED, ex.getMessage()), HttpStatus.UNAUTHORIZED);
