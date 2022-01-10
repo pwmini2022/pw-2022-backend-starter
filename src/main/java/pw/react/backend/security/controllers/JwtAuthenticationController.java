@@ -1,17 +1,13 @@
 package pw.react.backend.security.controllers;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pw.react.backend.security.models.JwtRequest;
 import pw.react.backend.security.models.JwtResponse;
 import pw.react.backend.security.services.JwtTokenService;
@@ -20,6 +16,7 @@ import pw.react.backend.security.services.JwtUserDetailsService;
 @RestController
 @RequestMapping(path = JwtAuthenticationController.AUTHENTICATION_PATH)
 @Profile({"jwt"})
+@Api(tags = "Security")
 public class JwtAuthenticationController {
 
     public static final String AUTHENTICATION_PATH = "/authenticate";
@@ -34,6 +31,7 @@ public class JwtAuthenticationController {
     private JwtUserDetailsService userDetailsService;
 
     @PostMapping
+    @ApiOperation(value = "Authenticates user.", notes = "Returns token.")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());

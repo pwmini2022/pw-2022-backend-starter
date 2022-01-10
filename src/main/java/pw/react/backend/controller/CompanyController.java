@@ -1,13 +1,12 @@
 package pw.react.backend.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,9 +14,7 @@ import pw.react.backend.dao.CompanyRepository;
 import pw.react.backend.exceptions.UnauthorizedException;
 import pw.react.backend.models.Company;
 import pw.react.backend.models.CompanyLogo;
-import pw.react.backend.services.CompanyService;
-import pw.react.backend.services.LogoService;
-import pw.react.backend.services.SecurityProvider;
+import pw.react.backend.services.*;
 import pw.react.backend.web.UploadFileResponse;
 
 import java.util.Collection;
@@ -28,6 +25,7 @@ import static java.util.stream.Collectors.joining;
 @RestController
 @RequestMapping(path = CompanyController.COMPANIES_PATH)
 @Slf4j
+@Api(tags = {"Companies", "Companies-logo"})
 public class CompanyController {
 
     public static final String COMPANIES_PATH = "/companies";
@@ -50,6 +48,7 @@ public class CompanyController {
     }
 
     @PostMapping(path = "")
+    @ApiOperation(value = "Create company", notes = "Creates company in the db and returns its ID.")
     public ResponseEntity<String> createCompanies(@RequestHeader HttpHeaders headers, @RequestBody List<Company> companies) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -69,6 +68,7 @@ public class CompanyController {
     }
 
     @GetMapping(path = "/{companyId}")
+    @ApiOperation(value = "Find Company by id.", notes = "Returns company object.")
     public ResponseEntity<Company> getCompany(@RequestHeader HttpHeaders headers,
                                               @PathVariable Long companyId) {
         logHeaders(headers);
@@ -79,6 +79,7 @@ public class CompanyController {
     }
 
     @GetMapping(path = "")
+    @ApiOperation(value = "Gets all companies.", notes = "Returns collection of companies.")
     public ResponseEntity<Collection<Company>> getAllCompanies(@RequestHeader HttpHeaders headers) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -88,6 +89,7 @@ public class CompanyController {
     }
 
     @PutMapping(path = "/{companyId}")
+    @ApiOperation(value = "Updates company by id.", notes = "Returns updated company.")
     public ResponseEntity<Company> updateCompany(@RequestHeader HttpHeaders headers,
                                                  @PathVariable Long companyId,
                                                  @RequestBody Company updatedCompany) {
@@ -104,6 +106,7 @@ public class CompanyController {
     }
 
     @DeleteMapping(path = "/{companyId}")
+    @ApiOperation(value = "Deletes company id.", notes = "Returns an ID of deleted company.")
     public ResponseEntity<String> updateCompany(@RequestHeader HttpHeaders headers, @PathVariable Long companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -117,6 +120,8 @@ public class CompanyController {
     }
 
     @PostMapping("/{companyId}/logo")
+    @ApiOperation(value = "Creates logo for the company with specific id.",
+            notes = "Returns details about uploaded file.")
     public ResponseEntity<UploadFileResponse> uploadLogo(@RequestHeader HttpHeaders headers,
                                                          @PathVariable Long companyId,
                                                          @RequestParam("file") MultipartFile file) {
@@ -136,6 +141,7 @@ public class CompanyController {
     }
 
     @GetMapping(value = "/{companyId}/logo", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ApiOperation(value = "Gets the logo for the company based on company id.", notes = "Returns file as bytes array.")
     public @ResponseBody byte[] getLog(@RequestHeader HttpHeaders headers, @PathVariable Long companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -147,6 +153,8 @@ public class CompanyController {
     }
 
     @GetMapping(value = "/{companyId}/logo2")
+    @ApiOperation(value = "Gets the logo for the company based on company id. Version 2.",
+            notes = "Returns file as bytes array.")
     public ResponseEntity<Resource> getLogo2(@RequestHeader HttpHeaders headers, @PathVariable Long companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -161,6 +169,7 @@ public class CompanyController {
     }
 
     @DeleteMapping(value = "/{companyId}/logo")
+    @ApiOperation(value = "Deletes the logo for the company based on company id.", notes = "Returns company id.")
     public ResponseEntity<String> removeLogo(@RequestHeader HttpHeaders headers, @PathVariable String companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {

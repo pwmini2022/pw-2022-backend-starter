@@ -1,13 +1,12 @@
 package pw.react.backend.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pw.react.backend.models.User;
 import pw.react.backend.services.UserClient;
 
@@ -15,6 +14,7 @@ import pw.react.backend.services.UserClient;
 @RequestMapping(path = "/users")
 @Profile({"!jwt"})
 @Slf4j
+@Api(tags = "Users")
 public class UserController {
 
     protected final UserClient userClient;
@@ -25,6 +25,7 @@ public class UserController {
     }
 
     @PostMapping(path = "")
+    @ApiOperation(value = "Creates a new user.", notes = "Returns newly created user.")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         user = userClient.validateAndSave(user);
         log.info("Password is not going to be encoded");
