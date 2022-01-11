@@ -1,6 +1,8 @@
 package pw.react.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,15 +14,20 @@ import java.util.Collections;
 @Entity
 @Table
 @Data
+@ApiModel(description="All details about the user.")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ApiModelProperty(notes = "User id.")
     private Long id;
     @Column
+    @ApiModelProperty(notes = "Username.")
     private String username;
     @Column
+    @ApiModelProperty(notes = "Password.")
     private String password;
     @Column
+    @ApiModelProperty(notes = "E-mail.")
     private String email;
 
     @Override

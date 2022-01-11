@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Table(name = "company")
 @Data
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@ApiModel(description="All details about the student.")
+@ApiModel(description="All details about the company.")
 public class Company implements Serializable {
 
     private static final long serialVersionUID = -6783504532088859179L;
