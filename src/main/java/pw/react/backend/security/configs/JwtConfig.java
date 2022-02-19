@@ -1,6 +1,6 @@
 package pw.react.backend.security.configs;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,18 +13,12 @@ import pw.react.backend.security.services.JwtTokenService;
 import pw.react.backend.security.services.JwtUserDetailsService;
 
 @Configuration
+@ConfigurationProperties(prefix = "jwt")
 @Profile("jwt")
 public class JwtConfig {
 
-    private final String jwtSecret;
-    private final long jwtExpirationMs;
-
-    public JwtConfig(@Value(value = "${jwt.secret}") String jwtSecret,
-                     @Value(value = "${jwt.expirationMs}") long jwtExpirationMs
-    ) {
-        this.jwtSecret = jwtSecret;
-        this.jwtExpirationMs = jwtExpirationMs;
-    }
+    private String secret;
+    private long expirationMs;
 
     @Bean
     public JwtUserDetailsService jwtUserDetailsService(UserRepository userRepository) {
@@ -38,7 +32,7 @@ public class JwtConfig {
 
     @Bean
     public JwtTokenService jwtTokenService() {
-        return new JwtTokenService(jwtSecret, jwtExpirationMs);
+        return new JwtTokenService(secret, expirationMs);
     }
 
     @Bean
@@ -50,4 +44,21 @@ public class JwtConfig {
     public AuthenticationEntryPoint jwtAuthenticationEntryPoint() {
         return new JwtAuthenticationEntryPoint();
     }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public long getExpirationMs() {
+        return expirationMs;
+    }
+
+    public void setExpirationMs(long expirationMs) {
+        this.expirationMs = expirationMs;
+    }
 }
+
