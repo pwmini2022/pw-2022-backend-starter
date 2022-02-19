@@ -1,18 +1,18 @@
 package pw.react.backend.exceptions;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pw.react.backend.security.controllers.JwtAuthenticationController;
 
 @ControllerAdvice(annotations = RestController.class)
-@Slf4j
 public class ControllerExceptionHelper {
+
+    private static final Logger log = LoggerFactory.getLogger(ControllerExceptionHelper.class);
 
     @ExceptionHandler(value = { InvalidFileException.class })
     public ResponseEntity<ExceptionDetails> handleNotFound(InvalidFileException ex) {

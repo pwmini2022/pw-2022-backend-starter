@@ -1,8 +1,11 @@
 package pw.react.backend.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -11,32 +14,35 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pw.react.backend.dao.CompanyRepository;
+import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.exceptions.UnauthorizedException;
 import pw.react.backend.models.Company;
 import pw.react.backend.models.CompanyLogo;
 import pw.react.backend.services.*;
+import pw.react.backend.web.CompanyDto;
 import pw.react.backend.web.UploadFileResponse;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(path = CompanyController.COMPANIES_PATH)
-@Slf4j
-@Api(tags = {"Companies", "Companies-logo"})
 public class CompanyController {
+
+    private static final Logger log = LoggerFactory.getLogger(CompanyController.class);
 
     public static final String COMPANIES_PATH = "/companies";
 
     private final CompanyRepository repository;
-    private final SecurityProvider securityService;
+    private final SecurityService securityService;
     private final CompanyService companyService;
     private LogoService companyLogoService;
 
-    @Autowired
-    public CompanyController(CompanyRepository repository, SecurityProvider securityService, CompanyService companyService) {
+    public CompanyController(CompanyRepository repository, SecurityService securityService, CompanyService companyService) {
         this.repository = repository;
         this.securityService = securityService;
         this.companyService = companyService;
@@ -48,12 +54,16 @@ public class CompanyController {
     }
 
     @PostMapping(path = "")
-    @ApiOperation(value = "Create company", notes = "Creates company in the db and returns its ID.")
-    public ResponseEntity<String> createCompanies(@RequestHeader HttpHeaders headers, @RequestBody List<Company> companies) {
+    public ResponseEntity<Collection<CompanyDto>> createCompanies(@RequestHeader HttpHeaders headers,
+                                                                  @Valid @RequestBody List<CompanyDto> companies) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            List<Company> result = repository.saveAll(companies);
-            return ResponseEntity.ok(result.stream().map(c -> String.valueOf(c.getId())).collect(joining(",")));
+            List<Company> createdCompanies = companies.stream().map(CompanyDto::convertToCompany).collect(toList());
+            List<CompanyDto> result = repository.saveAll(createdCompanies)
+                    .stream()
+                    .map(CompanyDto::valueFrom)
+                    .collect(toList());
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }
         throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
@@ -68,45 +78,39 @@ public class CompanyController {
     }
 
     @GetMapping(path = "/{companyId}")
-    @ApiOperation(value = "Find Company by id.", notes = "Returns company object.")
-    public ResponseEntity<Company> getCompany(@RequestHeader HttpHeaders headers,
-                                              @PathVariable Long companyId) {
+    public ResponseEntity<CompanyDto> getCompany(@RequestHeader HttpHeaders headers, @PathVariable Long companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            return ResponseEntity.ok(repository.findById(companyId).orElseGet(() -> Company.EMPTY));
+            CompanyDto result = repository.findById(companyId)
+                    .map(CompanyDto::valueFrom)
+                    .orElseThrow(() -> new ResourceNotFoundException(String.format("Company with %d does not exist", companyId)));
+            return ResponseEntity.ok(result);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Company.EMPTY);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(CompanyDto.EMPTY);
     }
 
     @GetMapping(path = "")
-    @ApiOperation(value = "Gets all companies.", notes = "Returns collection of companies.")
-    public ResponseEntity<Collection<Company>> getAllCompanies(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<Collection<CompanyDto>> getAllCompanies(@RequestHeader HttpHeaders headers) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
-            return ResponseEntity.ok(repository.findAll());
+            return ResponseEntity.ok(repository.findAll().stream().map(CompanyDto::valueFrom).collect(toList()));
         }
         throw new UnauthorizedException("Request is unauthorized", COMPANIES_PATH);
     }
 
     @PutMapping(path = "/{companyId}")
-    @ApiOperation(value = "Updates company by id.", notes = "Returns updated company.")
-    public ResponseEntity<Company> updateCompany(@RequestHeader HttpHeaders headers,
-                                                 @PathVariable Long companyId,
-                                                 @RequestBody Company updatedCompany) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCompany(@RequestHeader HttpHeaders headers, @PathVariable Long companyId,
+                              @Valid @RequestBody CompanyDto updatedCompany) {
         logHeaders(headers);
-        Company result;
         if (securityService.isAuthorized(headers)) {
-            result = companyService.updateCompany(companyId, updatedCompany);
-            if (Company.EMPTY.equals(result)) {
-                return ResponseEntity.badRequest().body(updatedCompany);
-            }
-            return ResponseEntity.ok(result);
+            companyService.updateCompany(companyId, CompanyDto.convertToCompany(updatedCompany));
+        } else {
+            throw new UnauthorizedException("Request is unauthorized", COMPANIES_PATH);
         }
-        throw new UnauthorizedException("Request is unauthorized", COMPANIES_PATH);
     }
 
     @DeleteMapping(path = "/{companyId}")
-    @ApiOperation(value = "Deletes company id.", notes = "Returns an ID of deleted company.")
     public ResponseEntity<String> updateCompany(@RequestHeader HttpHeaders headers, @PathVariable Long companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -120,8 +124,6 @@ public class CompanyController {
     }
 
     @PostMapping("/{companyId}/logo")
-    @ApiOperation(value = "Creates logo for the company with specific id.",
-            notes = "Returns details about uploaded file.")
     public ResponseEntity<UploadFileResponse> uploadLogo(@RequestHeader HttpHeaders headers,
                                                          @PathVariable Long companyId,
                                                          @RequestParam("file") MultipartFile file) {
@@ -133,15 +135,18 @@ public class CompanyController {
                     .path("/companies/" + companyId + "/logo/")
                     .path(companyLogo.getFileName())
                     .toUriString();
-            return ResponseEntity.ok(new UploadFileResponse(
-                    companyLogo.getFileName(), fileDownloadUri, file.getContentType(), file.getSize()
-            ));
+            UploadFileResponse response = new UploadFileResponse(
+                    companyLogo.getFileName(),
+                    fileDownloadUri,
+                    file.getContentType(),
+                    file.getSize()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
         throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
     @GetMapping(value = "/{companyId}/logo", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ApiOperation(value = "Gets the logo for the company based on company id.", notes = "Returns file as bytes array.")
     public @ResponseBody byte[] getLog(@RequestHeader HttpHeaders headers, @PathVariable Long companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -152,9 +157,20 @@ public class CompanyController {
         throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
+    @Operation(summary = "Get logo for company")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Get log by company id",
+                    content = { @Content(mediaType = "application/json") }
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized operation",
+                    content = { @Content(mediaType = "application/json") }
+            )
+    })
     @GetMapping(value = "/{companyId}/logo2")
-    @ApiOperation(value = "Gets the logo for the company based on company id. Version 2.",
-            notes = "Returns file as bytes array.")
     public ResponseEntity<Resource> getLogo2(@RequestHeader HttpHeaders headers, @PathVariable Long companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
@@ -168,13 +184,25 @@ public class CompanyController {
         throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }
 
+    @Operation(summary = "Delete logo for given company")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Logo deleted",
+                    content = { @Content(mediaType = "application/json") }
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized operation",
+                    content = { @Content(mediaType = "application/json") }
+            )
+    })
     @DeleteMapping(value = "/{companyId}/logo")
-    @ApiOperation(value = "Deletes the logo for the company based on company id.", notes = "Returns company id.")
-    public ResponseEntity<String> removeLogo(@RequestHeader HttpHeaders headers, @PathVariable String companyId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeLogo(@RequestHeader HttpHeaders headers, @PathVariable String companyId) {
         logHeaders(headers);
         if (securityService.isAuthorized(headers)) {
             companyLogoService.deleteCompanyLogo(Long.parseLong(companyId));
-            return ResponseEntity.ok().body(String.format("Logo for the company with id %s removed.", companyId));
         }
         throw new UnauthorizedException("Unauthorized access to resources.", COMPANIES_PATH);
     }

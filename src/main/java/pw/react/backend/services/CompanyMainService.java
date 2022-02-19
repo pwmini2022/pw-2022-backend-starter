@@ -2,12 +2,10 @@ package pw.react.backend.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import pw.react.backend.dao.CompanyRepository;
+import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.models.Company;
 
-@Service
 class CompanyMainService implements CompanyService {
     private final Logger logger = LoggerFactory.getLogger(CompanyMainService.class);
 
@@ -15,20 +13,19 @@ class CompanyMainService implements CompanyService {
 
     CompanyMainService() { /*Needed only for initializing spy in unit tests*/}
 
-    @Autowired
     CompanyMainService(CompanyRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public Company updateCompany(Long id, Company updatedCompany) {
-        Company result = Company.EMPTY;
+    public Company updateCompany(Long id, Company updatedCompany) throws ResourceNotFoundException {
         if (repository.existsById(id)) {
             updatedCompany.setId(id);
-            result = repository.save(updatedCompany);
+            Company result = repository.save(updatedCompany);
             logger.info("Company with id {} updated.", id);
+            return result;
         }
-        return result;
+        throw new ResourceNotFoundException(String.format("Company with id [%d] not found.", id));
     }
 
     @Override

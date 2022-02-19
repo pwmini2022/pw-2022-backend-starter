@@ -1,20 +1,23 @@
 package pw.react.backend.security.services;
 
 import io.jsonwebtoken.*;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 
-@AllArgsConstructor
 public class JwtTokenService implements Serializable {
 
     private static final long serialVersionUID = -2550185165626007488L;
 
     private final String secret;
     private final long expirationMs;
+
+    public JwtTokenService(String secret, long expirationMs) {
+        this.secret = secret;
+        this.expirationMs = expirationMs;
+    }
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);

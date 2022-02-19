@@ -1,6 +1,7 @@
 package pw.react.backend.services;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import pw.react.backend.dao.UserRepository;
+import pw.react.backend.dao.*;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -16,8 +17,9 @@ import java.util.*;
 import static java.util.stream.Collectors.toSet;
 
 @Configuration
-@Slf4j
 public class MainConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(MainConfig.class);
 
     @Value(value = "${cors.urls}")
     private String corsUrls;
@@ -40,13 +42,23 @@ public class MainConfig {
     }
 
     @Bean
-    public HttpClient httpClient(RestTemplate restTemplate) {
-        return new HttpService(restTemplate);
+    public HttpService httpService(RestTemplate restTemplate) {
+        return new HttpBaseService(restTemplate);
     }
 
     @Bean
-    public UserClient userClient(UserRepository userRepository) {
-        return new UserService(userRepository);
+    public UserService userService(UserRepository userRepository) {
+        return new UserMainService(userRepository);
+    }
+
+    @Bean
+    public CompanyService companyMainService(CompanyRepository companyRepository) {
+        return new CompanyMainService(companyRepository);
+    }
+
+    @Bean
+    public LogoService logoService(CompanyLogoRepository companyLogoRepository) {
+        return new CompanyLogoService(companyLogoRepository);
     }
 
     @Bean

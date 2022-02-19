@@ -1,8 +1,5 @@
 package pw.react.backend.security.controllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
@@ -13,26 +10,27 @@ import pw.react.backend.security.models.JwtResponse;
 import pw.react.backend.security.services.JwtTokenService;
 import pw.react.backend.security.services.JwtUserDetailsService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = JwtAuthenticationController.AUTHENTICATION_PATH)
 @Profile({"jwt"})
-@Api(tags = "Security")
 public class JwtAuthenticationController {
 
     public static final String AUTHENTICATION_PATH = "/authenticate";
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenService jwtTokenService;
+    private final JwtUserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtTokenService jwtTokenService;
-
-    @Autowired
-    private JwtUserDetailsService userDetailsService;
+    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService, JwtUserDetailsService userDetailsService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenService = jwtTokenService;
+        this.userDetailsService = userDetailsService;
+    }
 
     @PostMapping
-    @ApiOperation(value = "Authenticates user.", notes = "Returns token.")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody JwtRequest authenticationRequest) throws Exception {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
