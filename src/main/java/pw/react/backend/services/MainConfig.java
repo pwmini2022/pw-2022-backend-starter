@@ -21,12 +21,16 @@ public class MainConfig {
 
     private static final Logger log = LoggerFactory.getLogger(MainConfig.class);
 
-    @Value(value = "${cors.urls}")
-    private String corsUrls;
-    @Value(value = "${cors.mappings}")
-    private String corsMappings;
+    private final String corsUrls;
+    private final String corsMappings;
 
     private static final Map<String, String> envPropertiesMap = System.getenv();
+
+    public MainConfig(@Value(value = "${cors.urls}") String corsUrls,
+                      @Value(value = "${cors.mappings}") String corsMappings) {
+        this.corsUrls = corsUrls;
+        this.corsMappings = corsMappings;
+    }
 
     @PostConstruct
     private void init() {

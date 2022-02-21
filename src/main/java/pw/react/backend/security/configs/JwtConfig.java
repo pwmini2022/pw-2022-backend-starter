@@ -1,5 +1,7 @@
 package pw.react.backend.security.configs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,13 +14,25 @@ import pw.react.backend.security.filters.JwtRequestFilter;
 import pw.react.backend.security.services.JwtTokenService;
 import pw.react.backend.security.services.JwtUserDetailsService;
 
+import javax.annotation.PostConstruct;
+
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
 @Profile("jwt")
 public class JwtConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtConfig.class);
+
     private String secret;
     private long expirationMs;
+
+    @PostConstruct
+    private void init() {
+        log.debug("************** JWT properties **************");
+        log.debug("JWT secret: {}", secret);
+        log.debug("JWT expirationMs: {}", expirationMs);
+    }
+
 
     @Bean
     public JwtUserDetailsService jwtUserDetailsService(UserRepository userRepository) {
