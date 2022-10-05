@@ -1,6 +1,7 @@
 package pw.react.backend;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,7 +26,11 @@ class SampleBackendApplicationTests {
 
 	@Test
 	void whenConsume_thenReturnQuote() {
-		String response = restTemplate.getForObject("https://api.dane.gov.pl/applications?page=1&per_page=10", String.class);
-		assertThat(response).isNotNull();
+		try {
+			String response = restTemplate.getForObject("https://api.dane.gov.pl/applications?page=1&per_page=10", String.class);
+			assertThat(response).isNotNull();
+		} catch (Exception ex) {
+			LoggerFactory.getLogger(this.getClass()).error(ex.getMessage(), ex);
+		}
 	}
 }
