@@ -1,16 +1,15 @@
 package pw.react.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "company")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Company implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6783504532088859179L;
 
     @Id
@@ -20,6 +19,9 @@ public class Company implements Serializable {
     private String name;
     @Column(name = "start_date")
     private LocalDateTime startDateTime;
+    /**
+     * By default, the column name in the database is going to be board_members
+     */
     @Column
     private int boardMembers;
 

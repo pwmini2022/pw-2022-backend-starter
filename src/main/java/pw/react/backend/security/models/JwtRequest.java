@@ -1,27 +1,10 @@
 package pw.react.backend.security.models;
 
 import javax.validation.constraints.NotEmpty;
+import java.io.Serial;
 import java.io.Serializable;
 
-public class JwtRequest implements Serializable {
-
+public record JwtRequest(@NotEmpty String username, @NotEmpty String password) implements Serializable {
+    @Serial
     private static final long serialVersionUID = 5926468583005150707L;
-
-    @NotEmpty
-    private final String username;
-    @NotEmpty
-    private final String password;
-
-    public JwtRequest(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 }
