@@ -83,3 +83,4 @@ JWT_SECRET some secret value best if generated randommly
 - [configure the EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html)
 - [save configuration](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-configuration-savedconfig.html)
 - [Azure Idea plugin](https://docs.microsoft.com/en-us/azure/developer/java/toolkit-for-intellij/create-hello-world-web-app)
+- Swagger url: [http://localhost:8080/swagger-ui/index.html]()
