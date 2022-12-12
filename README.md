@@ -56,7 +56,7 @@ Assumption: The subscription has been configured properly, and it is active.
 1. Go to [Quickstart Center](https://portal.azure.com/?quickstart=true#blade/Microsoft_Azure_Resources/QuickstartCenterBlade)
 2. Create a web app under new resource group.
 3. Create new application
-4. Choose Java 11 and create.
+4. Choose Java 17 and create.
 5. Under the same resource group create MySQL database engine 8. Create db schema in Workbench
 6. Environment parameters set under Configuration of Web App:
 ```
