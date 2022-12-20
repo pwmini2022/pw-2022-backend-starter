@@ -14,12 +14,12 @@ For further reference, please consider the following sections:
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
 * [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.4.0-SNAPSHOT/maven-plugin/reference/html/)
 * [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.4.0-SNAPSHOT/maven-plugin/reference/html/#build-image)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#boot-features-developing-web-applications)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#boot-features-jpa-and-spring-data)
-* [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#production-ready)
-* [Spring Boot DevTools](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#using-boot-devtools)
-* [Spring Boot Configuration Processor](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#features.external-config.typesafe-configuration-properties)
-* [Validation](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#io.validation)
+* [Spring Web](https://docs.spring.io/spring-boot/docs/2.7.6/reference/htmlsingle/#boot-features-developing-web-applications)
+* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/2.7.6/reference/htmlsingle/#boot-features-jpa-and-spring-data)
+* [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/2.7.6/reference/htmlsingle/#production-ready)
+* [Spring Boot DevTools](https://docs.spring.io/spring-boot/docs/2.7.6/reference/htmlsingle/#using-boot-devtools)
+* [Spring Boot Configuration Processor](https://docs.spring.io/spring-boot/docs/2.7.6/reference/htmlsingle/#features.external-config.typesafe-configuration-properties)
+* [Validation](https://docs.spring.io/spring-boot/docs/2.7.6/reference/htmlsingle/#io.validation)
 
 ### Guides
 The following guides illustrate how to use some features concretely:
@@ -83,4 +83,5 @@ JWT_SECRET some secret value best if generated randommly
 - [configure the EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html)
 - [save configuration](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-configuration-savedconfig.html)
 - [Azure Idea plugin](https://docs.microsoft.com/en-us/azure/developer/java/toolkit-for-intellij/create-hello-world-web-app)
+- [Azure Toolkit plugin - Sign in instructions](https://learn.microsoft.com/en-us/azure/developer/java/toolkit-for-intellij/sign-in-instructions)
 - Swagger url: [http://localhost:8080/swagger-ui/index.html]()
