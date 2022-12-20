@@ -8,10 +8,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pw.react.backend.security.models.JwtRequest;
 import pw.react.backend.security.models.JwtResponse;
 import pw.react.backend.security.services.JwtTokenService;
@@ -25,7 +22,7 @@ import javax.validation.Valid;
 @Profile({"jwt"})
 public class JwtAuthenticationController {
 
-    public static final String AUTHENTICATION_PATH = "/authenticate";
+    public static final String AUTHENTICATION_PATH = "/auth";
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
@@ -37,7 +34,7 @@ public class JwtAuthenticationController {
         this.userDetailsService = userDetailsService;
     }
 
-    @PostMapping
+    @PostMapping(path = "/login")
     public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody JwtRequest authenticationRequest,
                                                        HttpServletRequest request) throws Exception {
 
@@ -50,13 +47,6 @@ public class JwtAuthenticationController {
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
-    @PostMapping(path = "/logout")
-    public ResponseEntity<?> invalidateToken(HttpServletRequest request) {
-
-        boolean result = jwtTokenService.invalidateToken(request);
-        return result ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
-
     private void authenticate(String username, String password) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -65,5 +55,17 @@ public class JwtAuthenticationController {
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
+    }
+
+    @PostMapping(path = "/logout")
+    public ResponseEntity<Void> invalidateToken(HttpServletRequest request) {
+        boolean result = jwtTokenService.invalidateToken(request);
+        return result ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> removeInvalidTokens() {
+        jwtTokenService.removeTokens();
+        return ResponseEntity.accepted().build();
     }
 }

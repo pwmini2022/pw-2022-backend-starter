@@ -6,28 +6,33 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
+import pw.react.backend.dao.TokenRepository;
+import pw.react.backend.models.Token;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class JwtTokenService implements Serializable {
 
-    private final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
-
-    private static final Set<String> INVALID_TOKENS = new LinkedHashSet<>();
+    private static final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
 
     @Serial
     private static final long serialVersionUID = -2550185165626007488L;
 
     private final String secret;
     private final long expirationMs;
+    private final TokenRepository tokenRepository;
 
-    public JwtTokenService(String secret, long expirationMs) {
+    public JwtTokenService(String secret, long expirationMs, TokenRepository tokenRepository) {
         this.secret = secret;
         this.expirationMs = expirationMs;
+        this.tokenRepository = tokenRepository;
     }
 
     public String getUsernameFromToken(String token) {
@@ -60,7 +65,7 @@ public class JwtTokenService implements Serializable {
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
-    String getClientIpFromToken(String token) {
+    private String getClientIpFromToken(String token) {
         return getClaimFromToken(token, claims -> String.valueOf(claims.get("ip")));
     }
 
@@ -104,12 +109,13 @@ public class JwtTokenService implements Serializable {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails, HttpServletRequest request) {
+        Optional<Token> tokenOpt = tokenRepository.findByValue(token);
         final String username = getUsernameFromToken(token);
         return username.equals(userDetails.getUsername()) &&
                 !isTokenExpired(token) &&
                 isClientIpCorrect(token, request) &&
                 isValidUserAgent(token, request) &&
-                !INVALID_TOKENS.contains(token);
+                tokenOpt.isEmpty();
     }
 
     private boolean isValidUserAgent(String token, HttpServletRequest request) {
@@ -123,13 +129,17 @@ public class JwtTokenService implements Serializable {
     public boolean invalidateToken(HttpServletRequest request) {
         String authorizationHeader = "Authorization";
         String bearer = "Bearer ";
-
         String requestTokenHeader = request.getHeader(authorizationHeader);
+
         if (requestTokenHeader != null && requestTokenHeader.startsWith(bearer)) {
-            INVALID_TOKENS.add(requestTokenHeader.replace(bearer, ""));
-            INVALID_TOKENS.removeIf(this::isTokenExpired);
+            tokenRepository.save(new Token(requestTokenHeader.replace(bearer, "")));
             return true;
         }
         return false;
+    }
+
+    public void removeTokens() {
+        tokenRepository.deleteAll();
+        log.info("Tokens cleared.");
     }
 }

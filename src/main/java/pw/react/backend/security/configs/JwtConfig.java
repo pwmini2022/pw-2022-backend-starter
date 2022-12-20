@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.OncePerRequestFilter;
+import pw.react.backend.dao.TokenRepository;
 import pw.react.backend.dao.UserRepository;
 import pw.react.backend.security.filters.JwtAuthenticationEntryPoint;
 import pw.react.backend.security.filters.JwtRequestFilter;
@@ -46,13 +47,13 @@ public class JwtConfig {
     }
 
     @Bean
-    public JwtTokenService jwtTokenService() {
-        return new JwtTokenService(secret, expirationMs);
+    public JwtTokenService jwtTokenService(TokenRepository tokenRepository) {
+        return new JwtTokenService(secret, expirationMs, tokenRepository);
     }
 
     @Bean
-    public OncePerRequestFilter jwtRequestFilter(UserRepository userRepository) {
-        return new JwtRequestFilter(jwtUserDetailsService(userRepository), jwtTokenService());
+    public OncePerRequestFilter jwtRequestFilter(UserRepository userRepository, TokenRepository tokenRepository) {
+        return new JwtRequestFilter(jwtUserDetailsService(userRepository), jwtTokenService(tokenRepository));
     }
 
     @Bean
