@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pw.react</groupId>
-	<artifactId>pw-2021-backend-starter</artifactId>
+	<artifactId>pw-2022-backend-starter</artifactId>
 	<version>1.0.0</version>
-	<name>sample-backend</name>
+	<name>react-backend</name>
 	<description>Starter for the labs</description>
 
 	<properties>
@@ -62,12 +62,12 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.12</version>
+			<version>1.6.13</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-security</artifactId>
-			<version>1.6.12</version>
+			<version>1.6.13</version>
 		</dependency>
 
 		<dependency>
