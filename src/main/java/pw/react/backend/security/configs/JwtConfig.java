@@ -3,7 +3,9 @@ package pw.react.backend.security.configs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -32,7 +34,6 @@ public class JwtConfig {
         log.debug("JWT secret: {}", secret);
         log.debug("JWT expirationMs: {}", expirationMs);
     }
-
 
     @Bean
     public JwtUserDetailsService jwtUserDetailsService(UserRepository userRepository) {

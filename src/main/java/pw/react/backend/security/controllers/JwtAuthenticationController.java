@@ -1,15 +1,23 @@
 package pw.react.backend.security.controllers;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pw.react.backend.security.models.JwtRequest;
 import pw.react.backend.security.models.JwtResponse;
 import pw.react.backend.security.services.JwtTokenService;
 import pw.react.backend.security.services.JwtUserDetailsService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -30,15 +38,23 @@ public class JwtAuthenticationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody JwtRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody JwtRequest authenticationRequest,
+                                                       HttpServletRequest request) throws Exception {
 
         authenticate(authenticationRequest.username(), authenticationRequest.password());
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username());
 
-        final String token = jwtTokenService.generateToken(userDetails);
+        final String token = jwtTokenService.generateToken(userDetails, request);
 
         return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    @PostMapping(path = "/logout")
+    public ResponseEntity<?> invalidateToken(HttpServletRequest request) {
+
+        boolean result = jwtTokenService.invalidateToken(request);
+        return result ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     private void authenticate(String username, String password) throws Exception {

@@ -1,7 +1,9 @@
 package pw.react.backend.security.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -60,7 +62,7 @@ public class WebJwtSecurityConfig extends WebSecurityConfigurerAdapter {
                 // make sure we use stateless session; session won't be used to store user's state.
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/authenticate").permitAll()
+                .authorizeRequests().antMatchers("/authenticate/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .antMatchers( "/v3/api-docs/**", "/swagger-ui/**").permitAll()

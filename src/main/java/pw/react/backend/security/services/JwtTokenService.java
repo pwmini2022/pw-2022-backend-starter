@@ -1,14 +1,25 @@
 package pw.react.backend.security.services;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 
 public class JwtTokenService implements Serializable {
 
+    private final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
+
+    private static final Set<String> INVALID_TOKENS = new LinkedHashSet<>();
+
+    @Serial
     private static final long serialVersionUID = -2550185165626007488L;
 
     private final String secret;
@@ -23,11 +34,11 @@ public class JwtTokenService implements Serializable {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public Date getExpirationDateFromToken(String token) {
+    private Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+    private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
@@ -41,9 +52,39 @@ public class JwtTokenService implements Serializable {
         return expiration.before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, HttpServletRequest request) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("ip", getClientIp(request));
+        claims.put("user-agent", getUserAgent(request));
+        log.info("Adding ip:{} and user-agent:{} to the claims.", getClientIp(request), getUserAgent(request));
         return doGenerateToken(claims, userDetails.getUsername());
+    }
+
+    String getClientIpFromToken(String token) {
+        return getClaimFromToken(token, claims -> String.valueOf(claims.get("ip")));
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String remoteAddr = "";
+        if (request != null) {
+            remoteAddr = request.getHeader("X-FORWARDED-FOR");
+            if (remoteAddr == null || "".equals(remoteAddr)) {
+                remoteAddr = request.getRemoteAddr();
+            }
+        }
+        return remoteAddr;
+    }
+
+    private String getUserAgent(HttpServletRequest request) {
+        String ua = "";
+        if (request != null) {
+            ua = request.getHeader("User-Agent");
+        }
+        return ua;
+    }
+
+    String getUserAgentFromToken(String token) {
+        return getClaimFromToken(token, claims -> String.valueOf(claims.get("user-agent")));
     }
 
     //while creating the token -
@@ -62,8 +103,33 @@ public class JwtTokenService implements Serializable {
                 .compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, UserDetails userDetails, HttpServletRequest request) {
         final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return username.equals(userDetails.getUsername()) &&
+                !isTokenExpired(token) &&
+                isClientIpCorrect(token, request) &&
+                isValidUserAgent(token, request) &&
+                !INVALID_TOKENS.contains(token);
+    }
+
+    private boolean isValidUserAgent(String token, HttpServletRequest request) {
+        return getUserAgent(request).equals(getUserAgentFromToken(token));
+    }
+
+    private boolean isClientIpCorrect(String token, HttpServletRequest request) {
+        return getClientIp(request).equals(getClientIpFromToken(token));
+    }
+
+    public boolean invalidateToken(HttpServletRequest request) {
+        String authorizationHeader = "Authorization";
+        String bearer = "Bearer ";
+
+        String requestTokenHeader = request.getHeader(authorizationHeader);
+        if (requestTokenHeader != null && requestTokenHeader.startsWith(bearer)) {
+            INVALID_TOKENS.add(requestTokenHeader.replace(bearer, ""));
+            INVALID_TOKENS.removeIf(this::isTokenExpired);
+            return true;
+        }
+        return false;
     }
 }
