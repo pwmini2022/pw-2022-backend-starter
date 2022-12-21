@@ -65,7 +65,7 @@ MYSQL_HOSTNAME something similar to this: aa16my1gs1126vw.czyphws3wq6b.eu-centra
 MYSQL_PASSWORD MySQL password set during the creation
 MYSQL_PORT 3306 //MySQL server port
 MYSQL_USERNAME root //database user
-CORS_URLS urls of the frontend and backends for the bookly
+CORS urls of the frontend and backends for the bookly
 SPRING_PROFILES_ACTIVE prod-azure-mysql
 or
 SPRING_PROFILES_ACTIVE prod-azure-mysql,jwt
