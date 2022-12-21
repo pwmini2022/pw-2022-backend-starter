@@ -114,13 +114,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{PROTOCOL}}://{{DOMAIN_URL}}/{{COMPANIES_PATH}}",
+					"raw": "{{PROTOCOL}}://{{DOMAIN_URL}}/companies",
 					"protocol": "{{PROTOCOL}}",
 					"host": [
 						"{{DOMAIN_URL}}"
 					],
 					"path": [
-						"{{COMPANIES_PATH}}"
+						"companies"
 					]
 				}
 			},
@@ -141,13 +141,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{PROTOCOL}}://{{DOMAIN_URL}}/{{COMPANIES_PATH}}",
+					"raw": "{{PROTOCOL}}://{{DOMAIN_URL}}/companies",
 					"protocol": "{{PROTOCOL}}",
 					"host": [
 						"{{DOMAIN_URL}}"
 					],
 					"path": [
-						"{{COMPANIES_PATH}}"
+						"companies"
 					]
 				}
 			},
@@ -174,33 +174,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{PROTOCOL}}://{{DOMAIN_URL}}/{{COMPANIES_PATH}}/1",
+					"raw": "{{PROTOCOL}}://{{DOMAIN_URL}}/comapnies/1",
 					"protocol": "{{PROTOCOL}}",
 					"host": [
 						"{{DOMAIN_URL}}"
 					],
 					"path": [
-						"{{COMPANIES_PATH}}",
+						"comapnies",
 						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "actuator-loggers",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{PROTOCOL}}://{{DOMAIN_URL}}/actuator/loggers",
-					"protocol": "{{PROTOCOL}}",
-					"host": [
-						"{{DOMAIN_URL}}"
-					],
-					"path": [
-						"actuator",
-						"loggers"
 					]
 				}
 			},
@@ -231,6 +212,25 @@
 					],
 					"path": [
 						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actuator-loggers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{PROTOCOL}}://{{DOMAIN_URL}}/actuator/loggers",
+					"protocol": "{{PROTOCOL}}",
+					"host": [
+						"{{DOMAIN_URL}}"
+					],
+					"path": [
+						"actuator",
+						"loggers"
 					]
 				}
 			},
