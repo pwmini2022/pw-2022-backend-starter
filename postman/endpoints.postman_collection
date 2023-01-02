@@ -56,7 +56,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"pm.globals.unset(\"JWT_TOKEN\");"
 						],
 						"type": "text/javascript"
 					}
@@ -220,6 +220,9 @@
 		{
 			"name": "actuator-loggers",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -239,6 +242,9 @@
 		{
 			"name": "actuator-beans",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -258,6 +264,9 @@
 		{
 			"name": "actuator-heatlh",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -277,6 +286,9 @@
 		{
 			"name": "actuator-profiles",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
